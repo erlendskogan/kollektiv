@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kirkegutta</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-grid"></div>
+
+    <header class="topbar">
+      <div class="brand">
+        <div>
+          <h1 class="title grand-title">kirkegutta</h1>
+          <div class="subtitle">Kollektiv-dashboard</div>
+        </div>
+      </div>
+      <div class="status">
+        <div class="pill" id="today"></div>
+        <div class="pill warn" id="inventory-alert" hidden></div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel calendar">
+        <div class="panel-header">
+          <div>
+            <h2>Kalender</h2>
+            <p>Planlegg husmoter, middager og viktige datoer.</p>
+          </div>
+          <div class="calendar-controls">
+            <button class="ghost" id="prev-month" type="button">Forrige</button>
+            <div id="month-label" class="month-label"></div>
+            <button class="ghost" id="next-month" type="button">Neste</button>
+          </div>
+        </div>
+
+        <div class="calendar-grid" id="calendar-grid"></div>
+        <div class="event-list" id="event-list"></div>
+
+        <form class="calendar-form" id="event-form">
+          <div class="field">
+            <label for="event-date">Dato</label>
+            <input type="date" id="event-date" required />
+          </div>
+          <div class="field">
+            <label for="event-title">Tittel</label>
+            <input type="text" id="event-title" placeholder="Husmote, Taco, etc." required />
+          </div>
+          <div class="field">
+            <label for="event-note">Notat</label>
+            <input type="text" id="event-note" placeholder="Valgfritt" />
+          </div>
+          <button type="submit" class="primary">Legg til</button>
+        </form>
+      </section>
+
+      <section class="panel inventory">
+        <div class="panel-header">
+          <div>
+            <h2>Beholdning</h2>
+            <p>Hold styr pa hva som finnes i kollektivet.</p>
+          </div>
+        </div>
+
+        <ul class="inventory-list" id="inventory-list"></ul>
+
+        <form class="inventory-form" id="inventory-form">
+          <div class="field">
+            <label for="item-name">Vare</label>
+            <input type="text" id="item-name" placeholder="Toalettpapir" required />
+          </div>
+          <div class="field">
+            <label for="item-type">Type</label>
+            <select id="item-type" required>
+              <option value="count">Antall (0-20)</option>
+              <option value="percent">Prosent (0-100)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="item-max">Maks (kun antall)</label>
+            <input type="number" id="item-max" min="1" max="50" value="20" />
+          </div>
+          <button type="submit" class="primary">Legg til</button>
+        </form>
+      </section>
+
+      <section class="panel leaderboard">
+        <div class="panel-header">
+          <div>
+            <h2>Leaderboard</h2>
+            <p>Poeng for husarbeid. Krever bildebevis.</p>
+          </div>
+        </div>
+
+        <div class="leaderboard-list" id="leaderboard-list"></div>
+
+        <div class="proof-box">
+          <h3>Gi poeng</h3>
+          <form id="proof-form" class="proof-form">
+            <div class="field">
+              <label for="proof-user">Bruker</label>
+              <select id="proof-user" required>
+                <option value="theodor_gay">theodor_gay</option>
+                <option value="oscar_gay">oscar_gay</option>
+                <option value="erlend">erlend</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="proof-task">Oppgave</label>
+              <input type="text" id="proof-task" placeholder="Stovsuging, kjokken..." required />
+            </div>
+            <div class="field">
+              <label for="proof-photo">Bildebevis</label>
+              <input type="file" id="proof-photo" accept="image/*" required />
+            </div>
+            <button type="submit" class="primary">+1 poeng</button>
+          </form>
+        </div>
+
+        <div class="proof-log">
+          <h3>Bevislogg</h3>
+          <div id="proof-log"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Lagres i Supabase.</span>
+    </footer>
+
+    <script>
+      window.__SUPABASE_URL__ = "https://gytwrqxdpzqeleivdnra.supabase.co";
+      window.__SUPABASE_ANON_KEY__ =
+        "sb_publishable_2c_LJCZB-L9FBV65BjKo3Q_BsHptCtj";
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
