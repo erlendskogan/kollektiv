@@ -54,10 +54,16 @@ const defaultData = {
     { name: "Oppvaskmiddel", qty: 65, type: "percent", min: 0, max: 100 },
   ],
   leaderboard: [
-    { name: "theodor_gay", score: 0 },
-    { name: "oscar_gay", score: 0 },
-    { name: "erlend", score: 0 },
+    { name: "Theodor", score: 0 },
+    { name: "Oscar", score: 0 },
+    { name: "Erlend", score: 0 },
   ],
+};
+
+const legacyNameMap = {
+  theodor_gay: "Theodor",
+  oscar_gay: "Oscar",
+  erlend: "Erlend",
 };
 
 function formatDate(date) {
@@ -532,6 +538,8 @@ async function loadData() {
   state.leaderboard = normalizeLeaderboard(leaderboardRes.data || []);
   state.proofs = proofsRes.data || [];
 
+  await migrateLegacyNames();
+
   if (state.events.length === 0) {
     const inserts = await supabase.from("events").insert(defaultData.events).select();
     state.events = inserts.data || state.events;
@@ -546,6 +554,27 @@ async function loadData() {
     const inserts = await supabase.from("leaderboard").insert(defaultData.leaderboard).select();
     state.leaderboard = normalizeLeaderboard(inserts.data || state.leaderboard);
   }
+}
+
+async function migrateLegacyNames() {
+  const legacyEntries = state.leaderboard.filter((item) => legacyNameMap[item.name]);
+  if (legacyEntries.length === 0) return;
+
+  for (const entry of legacyEntries) {
+    const nextName = legacyNameMap[entry.name];
+    await supabase.from("leaderboard").update({ name: nextName }).eq("id", entry.id);
+  }
+
+  await Promise.all(
+    Object.entries(legacyNameMap).map(([from, to]) =>
+      supabase.from("proofs").update({ user_name: to }).eq("user_name", from)
+    )
+  );
+
+  const leaderboardRes = await supabase.from("leaderboard").select("*");
+  const proofsRes = await supabase.from("proofs").select("*");
+  state.leaderboard = normalizeLeaderboard(leaderboardRes.data || []);
+  state.proofs = proofsRes.data || [];
 }
 
 async function updateInventoryItem(id, patch) {
